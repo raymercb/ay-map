@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.finnair.com/go/2018.1-121/assets-6/js/vendor/jquery-2.1.0.min.js"></script>
+  <script src="context.js"></script> 
+  <!--<script type="text/javascript">// <![CDATA[
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-33927255-1', 'finnair.com', {'siteSpeedSampleRate': 3});
+    ga('require', 'ec');
+    // ]]>
+  </script>-->
+  </head>
+  <body>
+    <!--<div class="em-container">
+      <button class="em-button" onclick="initiateGoogleMap()">Step #1 <br>Start Finnair map</button>
+      <button class="em-button" id="btnInitSidebar" onclick="initSidebar()" disabled>Step #2 <br>Start Sidebar</button>
+    </div>-->
+    <div id="site-content" tabindex="-1" class="main-content js-main-content " role="main">
+    <section class="heading blue-lighter-bg">
+        <div class="heading__wrapper">
+            <h1>Our destinations</h1>
+            <p aria-hidden="true">You can explore the destination map by selecting a region from the dropdown menu, or clicking and dragging the map with your mouse. For more details about our destinations, click on the pins on the map.</p>
+            <section class="cf filters">
+                <div class="filters__wrapper">
+                    <span class="filters__heading h3">Select region</span>
+                    <select onclick="initSidebar()" name="selectRegion" id="selectRegion" class="select-fixed-style" disabled>
+                        <option value="" selected="selected">All</option>
+                        <option value="FI">Finland</option>
+                        <option value="SC">Scandinavia</option>
+                        <option value="BL">Baltics</option>
+                        <option value="EU">Europe</option>
+                        <option value="AS">Asia</option>
+                        <option value="OC">Oceania</option>
+                        <option value="NA">Americas</option>
+                        <option value="ME">Middle East</option>
+                    </select>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <section class="destinations__map-wrapper cf">
+        <div id="filtered-destinations" class="filtered-destinations__container">
+            <div class="close-alert__btn">
+                <button id="close-container" type="button" class="icon-close">
+                    <span class="is-vishidden">Close</span>
+                </button>
+            </div>
+            <span id="result-heading" class="h1"></span>
+            <section class="destination-list-container" aria-live="assertive"></section>
+            <div id="single-destination-container" class="single-destination-container"></div>
+        </div>
+        <div id="map" class="destinations__map"></div>
+    </section>
+  </div>
+  <script>
+    var map;
+    var ga;
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: -34.397, lng: 150.644},
+        zoom: 8
+      });
+    }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApSijtFBCTjGt4HjPeBLc_OBXVhWesMpE&callback=initMap"></script>
+  <script src="googleMaps.js"></script>  
+  <script src="https://www.finnair.com/go/2018.1-121/assets-6/js/vendor/handlebars-v4.0.5.min.js"></script>
+  <script src="58-destination-frontpage.js"></script>
+  <script type="text/x-handlebars-template" id="country-list-template">
+        <div class="destination-list-holder">
+            { {#if addTitle} }
+            <h3>{ {countryName} }</h3>
+            { {/if} }
+            <ul class="destination-list unstyled" id="{ {countryCode} }">
+            </ul>
+        </div>
+    </script>
+    <script type="text/x-handlebars-template" id="single-destination-template">
+        <section class="offer-block" style="background-image:url('/go/2018.1-121/Images/content-pages/Destinations/Map/{ {id} }.jpg')">
+            <div class="back-alert__btn">
+                <button id="back-container" type="button" class="icon-arrow-left">
+                    <span class="is-vishidden">Back</span>
+                    </button>
+            </div>
+            <div class="offer-block__link">
+                <h3>{ {country} }</h3>
+                <h4>{ {name} }</h4>
+                { {#if price} }
+                
+
+    <a href="https://www.finnair.com/us/gb/offers?DEST={ {id} }" data-event-tracking="destinationMapSidebar, { {id} } with ID { {offerId} } from { {price} } " data-action-is="click_button" class=" btn price slide-content-button">
+        <span class="slide-content-button__book-now iconmoon-before">Book now</span>
+        <span class="slide-content-button__price icomoon-before"><span class="from">from</span> ${ {price} } </span>
+    </a>
+
+            { {/if} }
+        </section>
+        <section class="destination-information"> 
+        {{#if dailyFlights}}
+        
+            {{#ifEqual flightFrequencyFormat 'daily'}}
+            <div class="destination-information__daily-flights"> 
+
+            <p>Daily flights: up to <span>{ {dailyFlights} }</span></p>
+            </div>
+            { {/ifEqual} }
+            
+            { {#ifEqual flightFrequencyFormat 'weekly'} }
+            <div class="destination-information__daily-flights"> 
+
+            <p>Weekly flights: up to <span>{ {weeklyFlights} }</span></p>
+            </div>
+            { {/ifEqual} }
+            
+            { {#ifEqual flightFrequencyFormat 'uptoweek'} }
+            <div class="destination-information__daily-flights"> 
+
+            <p>Weekly flights: up to <span>{{weeklyFlights}}</span></p>
+            </div>
+            { {/ifEqual} }
+            
+            
+            {{/if}}
+            { {#if destPageLink} }
+            <div class="destination-information__discover-more"> 
+                <div class="g-two-thirds">
+                    <h3>Get to know <br />{ {name} }</h3>
+                    <p><a href="{ {destPageLink} }" data-event-tracking="destinationMapSidebar, Discover more about { {id} } " data-action-is="click_button" class="btn arrow-small ">Discover more</a></p>
+                </div>
+                <div class="g-third"><img src="/go/2018.1-121/Images/content-pages/Destinations/300x300/300x300_{ {id} }.jpg"
+                    /></div>
+            </div>
+            { {/if} } { {#if travelGuideLink} }
+            <div class="destination-information__travel-guide"><p>Need more inspiration?<br />See our { {name} } <a href="{ {travelGuideLink} }" data-event-tracking="destinationMapSidebar, See our { {id} } travel guide" data-action-is="click_link" class="arrow-link ">travel guide</a></p></div> 
+            { {/if} } { {#if airportLink} }
+            <div class="destination-information__airport"> 
+            <i class="icon-airport filled-icon" aria-hidden="true"></i>
+                <p class="destination-information__airport__title">{ {name} } Airport</p>
+            <a class="js-fake-link-wrapper" href="{ {airportLink} }" data-event-tracking="destinationMapSidebar, { {id} } aiport" data-action-is="click_link" target="_blank">
+                <p class="destination-information__airport__more-info arrow-link">More info</p>
+            </a>
+            </div>
+            { {/if} }
+            
+            
+        </section>
+
+    </script>
+    <script>
+        (function(){
+           initiateGoogleMap();
+           initSidebar();
+        })();
+    </script>
+  </body>
+</html>
