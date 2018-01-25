@@ -63,6 +63,43 @@
     </section>
   </div>
   <script>
+    var continentNames = {
+        FI: "Finland",
+        SC: "Scandinavia",
+        BL: "Baltics",
+        EU: "Europe",
+        AS: "Asia",
+        OC: "Oceania",
+        NA: "Americas",
+        ME: "Middle East"
+    }
+
+    var mapElements = {
+        $mapRef: $('#map'),
+        $selectRegion: $('#selectRegion'),
+        $selectActivity: $('#selectActivity'),
+        $filteredDestinations: $('#filtered-destinations'),
+        $resultHeading: $('#result-heading'),
+        $destinationList: $('.destination-list-container'),
+        $noResultsContainer: $('#no-results-container'),
+        $singleDestinationContainer: $('#single-destination-container'),
+        $closeButton: $('.close-alert__btn'),
+        $mapStatus: $('#mapStatus')
+    }
+
+    var mapSettings = {
+        allDestDataUrl: "/us/gb/offers?PAGE=AJAX&ENTITY=content&DIALOG_KEY=destination_map_allData_json_v2",
+        mapStylesUrl: "googleMapStyles.json",
+        baseUrl: "/",
+        assetsUrl: "/",
+        markers: {},
+        markersFiltered: {}
+    }
+
+    var mapData = {
+        filtered: [],
+        array: []
+    }
     var map;
     var ga;
     function initMap() {
